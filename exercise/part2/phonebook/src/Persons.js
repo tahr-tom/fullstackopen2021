@@ -1,4 +1,4 @@
-const Persons = ({ persons, searchTerm }) => {
+const Persons = ({ persons, searchTerm, removePerson }) => {
   return (
     <div>
       {" "}
@@ -7,7 +7,10 @@ const Persons = ({ persons, searchTerm }) => {
           name.toLowerCase().includes(searchTerm.toLowerCase())
         )
         .map((person) => (
-          <div key={person.name}>{`${person.name} ${person.number}`}</div>
+          <div key={person.name}>
+            {`${person.name} ${person.number}`}{" "}
+            <button onClick={() => removePerson(person.id)}>delete</button>
+          </div>
         ))}
     </div>
   )
