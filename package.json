@@ -1,0 +1,19 @@
+{
+  "name": "fullstackopen2021-part3",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "tahr-tom <20882772+tahr-tom@users.noreply.github.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "morgan": "^1.10.0"
+  }
+}
