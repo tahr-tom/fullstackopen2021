@@ -1,33 +1,30 @@
-require("dotenv").config()
-const express = require("express")
+require('dotenv').config()
+const express = require('express')
 const app = express()
-const Person = require("./models/person")
-const morgan = require("morgan")
-const cors = require("cors")
-const req = require("express/lib/request")
-const { response } = require("express")
-const { connect } = require("mongoose")
-morgan.token("postData", function (req, res) {
-  if (req.method === "POST") return JSON.stringify(req.body)
-  return ""
+const Person = require('./models/person')
+const morgan = require('morgan')
+const cors = require('cors')
+morgan.token('postData', function (req, _res) {
+  if (req.method === 'POST') return JSON.stringify(req.body)
+  return ''
 })
 
 app.use(express.json())
 app.use(
   morgan(
-    ":method :url :status :res[content-length] - :response-time ms :postData"
+    ':method :url :status :res[content-length] - :response-time ms :postData'
   )
 )
 app.use(cors())
-app.use(express.static("build"))
+app.use(express.static('build'))
 
-app.get("/api/persons", (req, res) => {
+app.get('/api/persons', (req, res) => {
   Person.find({}).then((persons) => {
     res.json(persons)
   })
 })
 
-app.get("/info", (req, res) => {
+app.get('/info', (req, res) => {
   Person.find({}).then((persons) => {
     res.send(
       `<p>Phonebook has info for ${
@@ -36,7 +33,7 @@ app.get("/info", (req, res) => {
     )
   })
 })
-app.get("/api/persons/:id", (req, res, next) => {
+app.get('/api/persons/:id', (req, res, next) => {
   Person.findById(req.params.id)
     .then((person) => {
       if (person) {
@@ -50,18 +47,18 @@ app.get("/api/persons/:id", (req, res, next) => {
     })
 })
 
-app.post("/api/persons", (req, res, next) => {
+app.post('/api/persons', (req, res, next) => {
   const body = req.body
 
   if (!body.name) {
     return res.status(400).json({
-      error: "name is missing",
+      error: 'name is missing',
     })
   }
 
   if (!body.number) {
     return res.status(400).json({
-      error: "number is missing",
+      error: 'number is missing',
     })
   }
 
@@ -77,7 +74,7 @@ app.post("/api/persons", (req, res, next) => {
     .catch((error) => next(error))
 })
 
-app.put("/api/persons/:id", (req, res, next) => {
+app.put('/api/persons/:id', (req, res, next) => {
   const body = req.body
   const person = {
     name: body.name,
@@ -94,9 +91,9 @@ app.put("/api/persons/:id", (req, res, next) => {
     .catch((error) => next(error))
 })
 
-app.delete("/api/persons/:id", (req, res, next) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndRemove(req.params.id)
-    .then((result) => {
+    .then(() => {
       res.status(204).end()
     })
     .catch((error) => next(error))
@@ -105,9 +102,9 @@ app.delete("/api/persons/:id", (req, res, next) => {
 const errorHandler = (error, req, res, next) => {
   console.error(error.message)
 
-  if (error.name === "CastError") {
-    return res.status(400).send({ error: "malformatted id" })
-  } else if (error.name === "ValidationError") {
+  if (error.name === 'CastError') {
+    return res.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
     return res.status(400).json({ error: error.message })
   }
   next(error)
