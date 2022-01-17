@@ -38,15 +38,23 @@ const App = () => {
       number: newNumber,
     }
 
-    personService.create(newPerson).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson))
-      setNewName("")
-      setNewNumber("")
-      setMessage(`Added ${newPerson.name}`)
-      setTimeout(() => {
-        setMessage(null)
-      }, 3000)
-    })
+    personService
+      .create(newPerson)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName("")
+        setNewNumber("")
+        setMessage(`Added ${newPerson.name}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 3000)
+      })
+      .catch((error) => {
+        setError(error.response.data.error)
+        setTimeout(() => {
+          setError(null)
+        }, 3000)
+      })
   }
 
   const updateNumber = (person) => {
@@ -65,9 +73,14 @@ const App = () => {
         }, 3000)
       })
       .catch((error) => {
-        setError(
-          `Information of ${person.name} has already been removed from server`
-        )
+        console.log(error.response)
+        if (error.response.data.error.startsWith("Validation")) {
+          setError(error.response.data.error)
+        } else {
+          setError(
+            `Information of ${person.name} has already been removed from server`
+          )
+        }
         setTimeout(() => {
           setError(null)
         }, 3000)
