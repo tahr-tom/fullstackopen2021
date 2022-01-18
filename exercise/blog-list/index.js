@@ -7,6 +7,7 @@ mongoose.connect(mongoUrl)
 
 const server = http.createServer(app)
 
-server.listen(config.PORT, () => {
-  console.log(`Server running on port ${config.PORT}`)
+const PORT = config.PORT || 3003
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
 })
