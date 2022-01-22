@@ -61,10 +61,20 @@ test('default value of likes is 0 if it is missing from the request body', async
   const response = await api.get('/api/blogs')
 
   const blogToTest = response.body[response.body.length - 1]
-  console.log(blogToTest)
   expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
   expect(blogToTest.likes).toBeDefined()
   expect(blogToTest.likes).toBe(0)
+})
+
+test('400 is returned when title and url properties are missing', async () => {
+  const newBlog = {
+    author: 'test for 400',
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
 })
 
 afterAll(() => {
