@@ -5,13 +5,28 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
+
+const getAuthToken = async () => {
+  const user = helper.initialUsers[1]
+
+  const loginResponse = await api
+    .post('/api/login')
+    .send(user)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  return loginResponse.body.token
+}
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  const blogObjects = helper.initialBlogs.map(blog => new Blog(blog))
-  const promiseArray = blogObjects.map(blog => blog.save())
-  await Promise.all(promiseArray)
+  await Blog.insertMany(helper.initialBlogs)
+  await User.deleteMany({})
+  const users = await helper.createHashAndRemovePasswordFor(helper.initialUsers)
+  await User.insertMany(users)
 })
+
 
 test('all blogs are returned', async () => {
   const response = await api.get('/api/blogs')
@@ -23,7 +38,9 @@ test('blog unique identifier is named id', async () =>{
   expect(response.body[0].id).toBeDefined()
 })
 
-test('a valid blog can be added', async () => {
+test('with correct credentials, a valid blog can be added', async () => {
+  const token = await getAuthToken()
+
   const newBlog = {
     title: 'new blog',
     author: 'test test test',
@@ -33,6 +50,7 @@ test('a valid blog can be added', async () => {
 
   await api
     .post('/api/blogs')
+    .auth(token, { type: 'bearer'} )
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -45,7 +63,31 @@ test('a valid blog can be added', async () => {
   expect(contents).toContain('new blog')
 })
 
-test('default value of likes is 0 if it is missing from the request body', async () => {
+test('without an auth token, a blog cannot be added', async () => {
+  const newBlog = {
+    title: 'new blog',
+    author: 'test test test',
+    url: 'http://testblog.foo',
+    like: 43
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
+
+  const response = await api.get('/api/blogs')
+
+  const contents = response.body.map(blog => blog.title)
+
+  expect(response.body).toHaveLength(helper.initialBlogs.length)
+  expect(contents).not.toContain('new blog')
+
+})
+
+test('with correct credentials, default value of likes is 0 if it is missing from the request body', async () => {
+  const token = await getAuthToken()
+
   const newBlog = {
     title: 'new blog',
     author: 'test test test',
@@ -54,6 +96,7 @@ test('default value of likes is 0 if it is missing from the request body', async
 
   await api
     .post('/api/blogs')
+    .auth(token, { type: 'bearer'} )
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -66,32 +109,50 @@ test('default value of likes is 0 if it is missing from the request body', async
   expect(blogToTest.likes).toBe(0)
 })
 
-test('400 is returned when title and url properties are missing', async () => {
+test('with correct credentials, 400 is returned when title and url properties are missing', async () => {
+  const token = await getAuthToken()
+
   const newBlog = {
     author: 'test for 400',
   }
 
   await api
     .post('/api/blogs')
+    .auth(token, { type: 'bearer'} )
     .send(newBlog)
     .expect(400)
 })
 
-test('a blog can be deleted', async () => {
-  const blogsAtStart = await helper.blogsInDb()
-  const blogToDelete = blogsAtStart[0]
+test('with correct credentials, a blog can be deleted if it is created by the request', async () => {
+  const token = await getAuthToken()
+
+  const newBlog = {
+    title: 'new blog to delete',
+    author: 'test test test',
+    url: 'http://testblog.foo',
+    like: 43
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .auth(token, { type: 'bearer'} )
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
 
   await api
-    .delete(`/api/blogs/${blogToDelete.id}`)
+    .delete(`/api/blogs/${response.body.id}`)
+    .auth(token, { type: 'bearer'} )
     .expect(204)
 
   const blogsAtEnd = await helper.blogsInDb()
 
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
 
   const titles = blogsAtEnd.map(b => b.title)
 
-  expect(titles).not.toContain(blogToDelete.title)
+  expect(titles).not.toContain(newBlog.title)
 })
 
 test('a blog like property can be updated', async() => {
