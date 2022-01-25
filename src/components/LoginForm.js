@@ -1,5 +1,3 @@
-import React from "react"
-
 const LoginForm = ({
     handleSubmit,
     handleUsernameChange,
@@ -8,7 +6,6 @@ const LoginForm = ({
     password
   }) => (
   <form onSubmit={handleSubmit}>
-    <h2>log in to application</h2>
     <div>
       username
       <input

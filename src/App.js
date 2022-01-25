@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import NewBlogForm from './components/NewBlogForm'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,9 +12,12 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [url, setUrl] = useState("")
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
+
+  const [message, setMessage] = useState(null)
+  const [error, setError] = useState(null)
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -28,7 +32,10 @@ const App = () => {
       setPassword('')
       
     } catch (error) {
-      console.log('wrong credentials')
+      setError('wrong username or password')
+      setTimeout(()=>{
+        setError(null)
+      }, 3000)
     }
   }
 
@@ -44,6 +51,12 @@ const App = () => {
 
     const returnedBlog = await blogService.create(newBlog)
     setBlogs(blogs.concat(returnedBlog))
+
+    setMessage(`${returnedBlog.title} by ${returnedBlog.author} added`)
+    setTimeout(()=>{
+      setMessage(null)
+    }, 3000)
+
     setTitle('')
     setAuthor('')
     setUrl('')
@@ -65,17 +78,21 @@ const App = () => {
 
   return (
     user == null ?
-      <LoginForm 
-      username={username}
-      password={password}
-      handleUsernameChange={({target}) => setUsername(target.value)}
-      handlePasswordChange={({target}) => setPassword(target.value)}
-      handleSubmit={handleLogin}/> 
+      <div>
+        <h2>log in to application</h2>
+        <Notification message={message} error={error}/>
+        <LoginForm 
+        username={username}
+        password={password}
+        handleUsernameChange={({target}) => setUsername(target.value)}
+        handlePasswordChange={({target}) => setPassword(target.value)}
+        handleSubmit={handleLogin}/> 
+      </div>
       :  
       <div>
         <h2>blogs</h2>
+        <Notification message={message} error={error}/>
         <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-
         <NewBlogForm
           title={title}
           author={author}
