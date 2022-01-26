@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const Blog = ({blog, like}) => {
+const Blog = ({blog, like, user, remove}) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -15,6 +15,8 @@ const Blog = ({blog, like}) => {
     setShowDetails(!showDetails)
   }
 
+  const isBlogAddedByUser = blog.user.username === user.username
+
   return (
   <div style={blogStyle}>
     <p>{blog.title} {blog.author} <button onClick={toggleShowDetails}>{showDetails ? 'hide' : 'show' }</button></p>
@@ -23,6 +25,7 @@ const Blog = ({blog, like}) => {
         <p>{blog.url}</p>
         <p>likes {blog.likes} <button onClick={like}>like</button></p>
         <p>{blog.user.name}</p>
+        {isBlogAddedByUser && <button onClick={remove}>remove</button>}
       </div>
     }  
 

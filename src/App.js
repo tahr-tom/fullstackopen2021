@@ -65,18 +65,35 @@ const App = () => {
 
   const like = async (blog) => {
     const returnedBlog = await blogService.like(blog)
-    setBlogs(blogs.map(blog => {
-      if(blog.id === returnedBlog.id) {
-        return returnedBlog
-      } else {
-        return blog
+    setBlogs(blogs
+      .map(blog => {
+        if(blog.id === returnedBlog.id) {
+          return returnedBlog
+        } else {
+          return blog
+        }
+      })
+      .sort((a, b) => b.likes - a.likes))
+  }
+
+  const remove = async (blog) => {
+    if(window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      try {
+        await blogService.remove(blog.id)
+        setBlogs(blogs.filter(b=>b.id !== blog.id).sort((a, b)=>b.likes - a.likes))
+      } catch (error) {
+        setError('Cannot remove blog')
+        setTimeout(() => {
+          setError(null)
+        }, 3000)
       }
-    }))
+    }
+
   }
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs( blogs.sort((a, b) => b.likes - a.likes) )
     )  
   }, [])
 
@@ -117,7 +134,7 @@ const App = () => {
           />
         </Togglable>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} like={() => like(blog)} />
+          <Blog key={blog.id} blog={blog} like={() => like(blog)} user={user} remove={() => remove(blog)} />
         )}
       </div>
   )
