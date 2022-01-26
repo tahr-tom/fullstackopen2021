@@ -11,13 +11,30 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
-const create = async newObject => {
+const create = async newBlog => {
   const config = {
     headers: { Authorization: token},
   }
 
-  const response = await axios.post(baseUrl, newObject, config)
+  const response = await axios.post(baseUrl, newBlog, config)
   return response.data
 }
 
-export default { getAll, create, setToken }
+const like = async blogToLike => {
+  const config = {
+    headers: { Authorization: token},
+  }
+
+  const updatedBlog = {
+    user: blogToLike.user.id,
+    likes: blogToLike.likes + 1,
+    author: blogToLike.author,
+    title: blogToLike.title,
+    url: blogToLike.url
+  }
+
+  const response = await axios.put(`${baseUrl}/${blogToLike.id}`, updatedBlog, config)
+  return response.data
+}
+
+export default { getAll, create, setToken, like }

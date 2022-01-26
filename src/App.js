@@ -63,6 +63,17 @@ const App = () => {
     setUrl('')
   }
 
+  const like = async (blog) => {
+    const returnedBlog = await blogService.like(blog)
+    setBlogs(blogs.map(blog => {
+      if(blog.id === returnedBlog.id) {
+        return returnedBlog
+      } else {
+        return blog
+      }
+    }))
+  }
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -106,7 +117,7 @@ const App = () => {
           />
         </Togglable>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} like={() => like(blog)} />
         )}
       </div>
   )
