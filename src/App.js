@@ -14,15 +14,15 @@ const App = () => {
   const [message, setMessage] = useState(null)
   const [error, setError] = useState(null)
 
-  const handleLogin = async ({username, password}) => {
+  const handleLogin = async ({ username, password }) => {
     try {
-      const user = await loginService.login({username, password})
+      const user = await loginService.login({ username, password })
       setUser(user)
       window.localStorage.setItem('loggedBlogListAppUser', JSON.stringify(user))
-      blogService.setToken(user.token)      
+      blogService.setToken(user.token)
     } catch (error) {
       setError('wrong username or password')
-      setTimeout(()=>{
+      setTimeout(() => {
         setError(null)
       }, 3000)
     }
@@ -38,7 +38,7 @@ const App = () => {
     const returnedBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(returnedBlog))
     setMessage(`${returnedBlog.title} by ${returnedBlog.author} added`)
-    setTimeout(()=>{
+    setTimeout(() => {
       setMessage(null)
     }, 3000)
     return returnedBlog
@@ -61,7 +61,7 @@ const App = () => {
     if(window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
       try {
         await blogService.remove(blog.id)
-        setBlogs(blogs.filter(b=>b.id !== blog.id).sort((a, b)=>b.likes - a.likes))
+        setBlogs(blogs.filter(b => b.id !== blog.id).sort((a, b) => b.likes - a.likes))
       } catch (error) {
         setError('Cannot remove blog')
         setTimeout(() => {
@@ -75,7 +75,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs.sort((a, b) => b.likes - a.likes) )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -91,10 +91,10 @@ const App = () => {
       <div>
         <h2>log in to application</h2>
         <Notification message={message} error={error}/>
-        <LoginForm 
-        handleLogin={handleLogin}/> 
+        <LoginForm
+          handleLogin={handleLogin}/>
       </div>
-      :  
+      :
       <div>
         <h2>blogs</h2>
         <Notification message={message} error={error}/>
