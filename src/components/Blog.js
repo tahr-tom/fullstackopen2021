@@ -15,7 +15,7 @@ const Blog = ({blog, like, user, remove}) => {
     setShowDetails(!showDetails)
   }
 
-  const isBlogAddedByUser = blog.user.username === user.username
+  const isBlogAddedByUser =  blog.user.username === user.username
 
   return (
   <div style={blogStyle}>
