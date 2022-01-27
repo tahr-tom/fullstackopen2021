@@ -57,13 +57,14 @@ describe('Blog app', function () {
 
     describe('and some blogs exist', function() {
       beforeEach(function() {
-        cy.login({ username: 'aaa', password: 'aaa'})
+        cy.login({ username: 'aaa', password: 'aaa' })
         cy.createBlog({ title: 'Some blog title', author: 'Cypress', url: 'cypress.example' })
-        cy.login({ username: 'bbb', password: 'bbb'})
+        cy.login({ username: 'bbb', password: 'bbb' })
         cy.createBlog({ title: 'Some blog title2', author: 'Cypress42', url: 'cypress.com' })
+        cy.createBlog({ title: 'Some blog title3', author: 'Cypress43', url: 'cypress.com' })
       })
 
-      it('it can be liked', function() {
+      it('can be liked', function() {
         cy.contains('Some blog title2').parent().contains('show').as('showButton')
         cy.get('@showButton').click()
         cy.contains('Some blog title2').parent().contains('like').as('likeButton')
@@ -71,19 +72,49 @@ describe('Blog app', function () {
         cy.contains('likes 1')
       })
 
-      it('it can be deleted by its creator', function() {
-        cy.login({ username: 'aaa', password: 'aaa'})
+      it('can be deleted by its creator', function() {
+        cy.login({ username: 'aaa', password: 'aaa' })
         cy.contains('Some blog title').parent().contains('show').as('showButton')
         cy.get('@showButton').click()
         cy.contains('Some blog title').parent().contains('remove').as('removeButton')
         cy.get('@removeButton').click()
       })
 
-      it('it cannot be deleted other users(non creator)', function() {
-        cy.login({ username: 'bbb', password: 'bbb'})
+      it('cannot be deleted other users(non creator)', function() {
+        cy.login({ username: 'bbb', password: 'bbb' })
         cy.contains('Some blog title').parent().contains('show').as('showButton')
         cy.get('@showButton').click()
         cy.contains('Some blog title').parent().contains('remove').should('not.exist')
+      })
+
+      it('they are ordered by likes with most likes being first', function() {
+        cy.contains('Some blog title').parent().contains('show').as('showButton1')
+        cy.get('@showButton1').click()
+        cy.contains('Some blog title').parent().contains('like').as('likeButton1')
+        cy.get('@likeButton1').click()
+        cy.wait(500)
+
+        cy.contains('Some blog title2').parent().contains('show').as('showButton2')
+        cy.get('@showButton2').click()
+        cy.contains('Some blog title2').parent().contains('like').as('likeButton2')
+        cy.get('@likeButton2').click()
+        cy.wait(500)
+        cy.get('@likeButton2').click()
+        cy.wait(500)
+
+        cy.contains('Some blog title3').parent().contains('show').as('showButton3')
+        cy.get('@showButton3', ).click()
+        cy.contains('Some blog title3').parent().contains('like').as('likeButton3')
+        cy.get('@likeButton3').click()
+        cy.wait(500)
+        cy.get('@likeButton3').click()
+        cy.wait(500)
+        cy.get('@likeButton3').click()
+
+        cy.wait(500)
+        cy.get('.blog').eq(0).contains('Some blog title3')
+        cy.get('.blog').eq(1).contains('Some blog title2')
+        cy.get('.blog').eq(2).contains('Some blog title')
       })
     })
   })

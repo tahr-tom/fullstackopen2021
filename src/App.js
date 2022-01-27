@@ -88,7 +88,7 @@ const App = () => {
   }, [])
 
   return (
-    user == null ?
+    user === null ?
       <div>
         <h2>log in to application</h2>
         <Notification message={message} error={error}/>

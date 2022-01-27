@@ -10,9 +10,9 @@ test('renders blog title and author, but not its url and likes number by default
   }
 
   const blog = {
-    title: "foo blog",
-    author: "Foo Bar",
-    url: "http://foo.bar",
+    title: 'foo blog',
+    author: 'Foo Bar',
+    url: 'http://foo.bar',
     likes: 42,
     user: user
   }
