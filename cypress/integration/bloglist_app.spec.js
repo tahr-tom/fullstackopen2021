@@ -1,13 +1,16 @@
 describe('Blog app', function () {
   beforeEach(function() {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
-    const user = {
+    cy.createUser({
       name: 'AAA',
       username: 'aaa',
       password: 'aaa'
-    }
-    cy.request('POST', 'http://localhost:3003/api/users', user)
-    cy.visit('http://localhost:3000')
+    })
+    cy.createUser({
+      name: 'BBB',
+      username: 'bbb',
+      password: 'bbb'
+    })
   })
 
   it('Login form is shown', function() {
@@ -39,11 +42,7 @@ describe('Blog app', function () {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.request('POST', 'http://localhost:3003/api/login', { username: 'aaa', password: 'aaa'})
-        .then(({body}) => {
-          localStorage.setItem('loggedBlogListAppUser', JSON.stringify(body))
-          cy.visit('http://localhost:3000')
-        })
+      cy.login({ username: 'aaa', password: 'aaa' })
     })
 
     it('A blog can be created', function() {
@@ -54,6 +53,38 @@ describe('Blog app', function () {
       cy.get('.formDiv > * button').click()
       cy.get('.message').should('contain', 'Blog from cypress by Cypress added')
       cy.get('.message').should('have.css', 'color', 'rgb(0, 128, 0)') // green color
+    })
+
+    describe('and some blogs exist', function() {
+      beforeEach(function() {
+        cy.login({ username: 'aaa', password: 'aaa'})
+        cy.createBlog({ title: 'Some blog title', author: 'Cypress', url: 'cypress.example' })
+        cy.login({ username: 'bbb', password: 'bbb'})
+        cy.createBlog({ title: 'Some blog title2', author: 'Cypress42', url: 'cypress.com' })
+      })
+
+      it('it can be liked', function() {
+        cy.contains('Some blog title2').parent().contains('show').as('showButton')
+        cy.get('@showButton').click()
+        cy.contains('Some blog title2').parent().contains('like').as('likeButton')
+        cy.get('@likeButton').click()
+        cy.contains('likes 1')
+      })
+
+      it('it can be deleted by its creator', function() {
+        cy.login({ username: 'aaa', password: 'aaa'})
+        cy.contains('Some blog title').parent().contains('show').as('showButton')
+        cy.get('@showButton').click()
+        cy.contains('Some blog title').parent().contains('remove').as('removeButton')
+        cy.get('@removeButton').click()
+      })
+
+      it('it cannot be deleted other users(non creator)', function() {
+        cy.login({ username: 'bbb', password: 'bbb'})
+        cy.contains('Some blog title').parent().contains('show').as('showButton')
+        cy.get('@showButton').click()
+        cy.contains('Some blog title').parent().contains('remove').should('not.exist')
+      })
     })
   })
 })
