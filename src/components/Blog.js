@@ -18,10 +18,10 @@ const Blog = ({ blog, like, user, remove }) => {
   const isBlogAddedByUser =  blog.user.username === user.username
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       <p>{blog.title} {blog.author} <button onClick={toggleShowDetails}>{showDetails ? 'hide' : 'show' }</button></p>
       {showDetails &&
-      <div>
+      <div className='blog-details'>
         <p>{blog.url}</p>
         <p>likes {blog.likes} <button onClick={like}>like</button></p>
         <p>{blog.user.name}</p>
