@@ -32,7 +32,8 @@ describe('Blog app', function () {
       cy.get('#password').type('wrongwrongwrong')
       cy.get('button:submit').click()
 
-      cy.contains('wrong username or password')
+      cy.get('.error').should('contain', 'wrong username or password')
+      cy.get('.error').should('have.css', 'color', 'rgb(255, 0, 0)')
     })
   })
 })
