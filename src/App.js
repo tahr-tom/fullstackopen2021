@@ -12,6 +12,21 @@ const App = () => {
     })
   }
 
+  const addAnecdote = (event) => {
+    event.preventDefault()
+    const anecdoteContentElement = document.querySelector("input[name='anecdote']")
+    const content = anecdoteContentElement.value
+    anecdoteContentElement.value = ''
+    dispatch({
+      type: 'NEW_ANECDOTE',
+      data: {
+        content: content,
+        id: (100000 * Math.random()).toFixed(0),
+        votes: 0
+      }
+    })
+  }
+
   return (
     <div>
       <h2>Anecdotes</h2>
@@ -28,8 +43,8 @@ const App = () => {
       )}
       <h2>create new</h2>
       <form>
-        <div><input /></div>
-        <button>create</button>
+        <div><input name='anecdote'/></div>
+        <button onClick={addAnecdote}>create</button>
       </form>
     </div>
   )
