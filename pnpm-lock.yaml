@@ -12,6 +12,7 @@ specifiers:
   react-scripts: 4.0.2
   redux: ^4.0.5
   redux-devtools-extension: ^2.13.9
+  redux-thunk: ^2.4.1
   web-vitals: ^1.1.0
 
 dependencies:
@@ -24,6 +25,7 @@ dependencies:
   react-redux: 7.2.6_react-dom@17.0.2+react@17.0.2
   react-scripts: 4.0.2_react@17.0.2
   redux: 4.1.2
+  redux-thunk: 2.4.1_redux@4.1.2
   web-vitals: 1.1.2
 
 devDependencies:
@@ -10928,6 +10930,14 @@ packages:
     dependencies:
       redux: 4.1.2
     dev: true
+
+  /redux-thunk/2.4.1_redux@4.1.2:
+    resolution: {integrity: sha512-OOYGNY5Jy2TWvTL1KgAlVy6dcx3siPJ1wTq741EPyUKfn6W6nChdICjZwCd0p8AZBs5kWpZlbkXW2nE/zjUa+Q==}
+    peerDependencies:
+      redux: ^4
+    dependencies:
+      redux: 4.1.2
+    dev: false
 
   /redux/4.1.2:
     resolution: {integrity: sha512-SH8PglcebESbd/shgf6mii6EIoRM0zrQyjcuQ+ojmfxjTtE0z9Y8pa62iA/OJ58qjP6j27uyW4kUF4jl/jd6sw==}
