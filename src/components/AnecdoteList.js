@@ -26,10 +26,7 @@ const AnecdoteList = () => {
   const dispatch = useDispatch()
   const handleClick = (anecdote) => {
     dispatch(vote(anecdote))
-    dispatch(set(`you voted ${anecdote.content}`))
-    setTimeout(() => {
-      dispatch(remove())
-    }, 5000)
+    dispatch(set(`you voted ${anecdote.content}`, 5))
   }
 
   return anecdotes.map(anecdote =>
