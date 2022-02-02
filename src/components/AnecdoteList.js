@@ -24,16 +24,16 @@ const AnecdoteList = () => {
     return anecdotes.filter(anecdote => anecdote.content.includes(filter))
   })
   const dispatch = useDispatch()
-  const handleClick = (id, content) => {
-    dispatch(vote(id))
-    dispatch(set(`you voted ${content}`))
+  const handleClick = (anecdote) => {
+    dispatch(vote(anecdote))
+    dispatch(set(`you voted ${anecdote.content}`))
     setTimeout(() => {
       dispatch(remove())
     }, 5000)
   }
 
   return anecdotes.map(anecdote =>
-      <Anecdote key={anecdote.id} anecdote={anecdote} handleClick={()=>handleClick(anecdote.id, anecdote.content)} />
+      <Anecdote key={anecdote.id} anecdote={anecdote} handleClick={()=>handleClick(anecdote)} />
     )
 }
  
