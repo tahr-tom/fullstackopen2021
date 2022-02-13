@@ -7,7 +7,7 @@ const filterReducer = (state = '', action) => {
   }
 }
 
-export const set = (keyword) => {
+export const setFilter = (keyword) => {
   return {
     type: 'SET_FILTER',
     data: { keyword }
