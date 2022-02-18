@@ -66,12 +66,12 @@ const CreateNew = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.DomProps.value,
+      author: author.DomProps.value,
+      info: author.DomProps.value,
       votes: 0
     })
-    props.showAndHideWith(`a new anecdote ${content} created!`)
+    props.showAndHideWith(`a new anecdote ${content.DomProps.value} created!`)
     navigate('/')
   }
 
@@ -87,15 +87,15 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input {...content.DomProps} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input {...author.DomProps} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input {...info.DomProps} />
         </div>
         <button>create</button>
         <button onClick={handleReset}>reset</button>
